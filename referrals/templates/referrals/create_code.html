@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Referral Code{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Create Referral Code</h1>
+            <p class="page-subtitle">Generate a new referral link for your campaign</p>
+        </div>
+        <a href="{% url 'generated_codes' %}" class="btn btn-outline-primary">
+            <i class="fas fa-list me-2"></i>
+            View All Codes
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="stat-card">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.name.id_for_label }}" class="form-label">
+                        <i class="fas fa-tag me-2"></i>
+                        Campaign Name
+                    </label>
+                    {{ form.name }}
+                    <div class="form-text">{{ form.name.help_text }}</div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.domain.id_for_label }}" class="form-label">
+                        <i class="fas fa-globe me-2"></i>
+                        Landing Page URL
+                    </label>
+                    {{ form.domain }}
+                    <div class="form-text">{{ form.domain.help_text }}</div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.code.id_for_label }}" class="form-label">
+                        <i class="fas fa-code me-2"></i>
+                        Custom Code (Optional)
+                    </label>
+                    {{ form.code }}
+                    <div class="form-text">{{ form.code.help_text }}</div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Dashboard
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Create Referral Code
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h5 class="mb-3">
+                <i class="fas fa-info-circle me-2"></i>
+                How it works
+            </h5>
+            <ul class="list-unstyled">
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Enter your campaign name
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Add your landing page URL
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Get a unique referral link
+                </li>
+                <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Share and track performance
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% if created_code %}
+<div class="created-code-card">
+    <h4 class="text-white mb-3">
+        <i class="fas fa-check-circle me-2"></i>
+        Code Created Successfully!
+    </h4>
+    
+    <div class="mb-3">
+        <strong>Campaign:</strong> {{ created_code.name }}
+    </div>
+    
+    <div class="mb-3">
+        <strong>Code:</strong> {{ created_code.code }}
+    </div>
+    
+    <div class="mb-3">
+        <strong>Your Referral Link:</strong>
+        <div class="d-flex align-items-center mt-2">
+            <input type="text" class="created-code-url me-2 flex-fill" value="{{ created_code.full_referral_url }}" readonly>
+            <button class="btn btn-light" onclick="copyToClipboard('{{ created_code.full_referral_url }}')">
+                <i class="fas fa-copy me-1"></i>
+                Copy
+            </button>
+        </div>
+    </div>
+    
+    <div class="d-flex gap-2">
+        <a href="{% url 'code_analytics' created_code.id %}" class="btn btn-light">
+            <i class="fas fa-chart-bar me-1"></i>
+            View Analytics
+        </a>
+        <a href="{% url 'generated_codes' %}" class="btn btn-outline-light">
+            <i class="fas fa-list me-1"></i>
+            All Codes
+        </a>
+        <a href="{% url 'create_code' %}" class="btn btn-outline-light">
+            <i class="fas fa-plus me-1"></i>
+            Create Another
+        </a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

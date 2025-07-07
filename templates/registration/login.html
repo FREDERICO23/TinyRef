@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Referral Pro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-5">
+        <div class="stat-card">
+            <div class="text-center mb-4">
+                <h2 class="page-title">Welcome Back</h2>
+                <p class="page-subtitle">Sign in to your referral dashboard</p>
+            </div>
+            
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Please correct the errors below.
+                </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user me-2"></i>
+                        Username
+                    </label>
+                    <input type="text" class="form-control" id="id_username" name="username" 
+                           value="{{ form.username.value|default:'' }}" required>
+                    {% if form.username.errors %}
+                        <div class="text-danger mt-1">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-4">
+                    <label for="id_password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>
+                        Password
+                    </label>
+                    <input type="password" class="form-control" id="id_password" name="password" required>
+                    {% if form.password.errors %}
+                        <div class="text-danger mt-1">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Sign In
+                </button>
+                
+                <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+            
+            <div class="text-center">
+                <p class="mb-2">
+                    <a href="{% url 'password_reset' %}" class="text-decoration-none">
+                        Forgot your password?
+                    </a>
+                </p>
+                <p>
+                    Don't have an account? 
+                    <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">
+                        Sign up here
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Demo credentials for testing -->
+        <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Demo Account:</strong><br>
+            Username: <code>testuser</code><br>
+            Password: <code>testpass123</code><br>
+            <small>Run <code>python manage.py create_sample_data</code> first</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

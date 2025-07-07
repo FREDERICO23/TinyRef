@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Generated Codes{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Generated Codes</h1>
+            <p class="page-subtitle">Manage all your referral codes</p>
+        </div>
+        <a href="{% url 'create_code' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>
+            Create New Code
+        </a>
+    </div>
+</div>
+
+{% if codes %}
+    <div class="table-container">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Campaign Details</th>
+                    <th>Referral Link</th>
+                    <th>Performance</th>
+                    <th>Revenue</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for code in codes %}
+                <tr>
+                    <td>
+                        <div>
+                            <strong>{{ code.name }}</strong>
+                            <br>
+                            <small class="text-muted">Code: {{ code.code }}</small>
+                            <br>
+                            <small class="text-muted">Created: {{ code.created_at|date:"M d, Y" }}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <input type="text" class="referral-url me-2 flex-fill" value="{{ code.full_referral_url }}" readonly style="font-size: 0.8rem;">
+                            <button class="copy-btn" onclick="copyToClipboard('{{ code.full_referral_url }}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="small">
+                            <div><strong>{{ code.total_clicks }}</strong> clicks</div>
+                            <div><strong>{{ code.total_signups }}</strong> signups</div>
+                            <div><strong>{{ code.total_conversions }}</strong> conversions</div>
+                            <div class="text-muted">{{ code.conversion_rate }}% rate</div>
+                        </div>
+                    </td>
+                    <td>
+                        <strong class="text-success">${{ code.total_revenue|floatformat:2 }}</strong>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'code_analytics' code.id %}" class="btn btn-outline-primary" title="View Analytics">
+                                <i class="fas fa-chart-bar"></i>
+                            </a>
+                            <button class="btn btn-outline-success" onclick="copyToClipboard('{{ code.full_referral_url }}')" title="Copy Link">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <a href="{% url 'delete_code' code.id %}" class="btn btn-outline-danger" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Pagination -->
+    {% if codes.has_other_pages %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if codes.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ codes.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">{{ codes.number }} of {{ codes.paginator.num_pages }}</span>
+                </li>
+                
+                {% if codes.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ codes.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ codes.paginator.num_pages }}">Last &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-link fa-3x text-muted mb-3"></i>
+        <h5>No referral codes yet</h5>
+        <p class="text-muted">Create your first referral code to start tracking referrals</p>
+        <a href="{% url 'create_code' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>
+            Create First Code
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+

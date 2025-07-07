@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics - {{ code.name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">{{ code.name }}</h1>
+            <p class="page-subtitle">
+                Code: <code>{{ code.code }}</code> • 
+                Created {{ code.created_at|date:"M d, Y" }}
+            </p>
+        </div>
+        <div>
+            <button class="btn btn-success me-2" onclick="copyToClipboard('{{ code.full_referral_url }}')">
+                <i class="fas fa-copy me-2"></i>
+                Copy Link
+            </button>
+            <a href="{% url 'generated_codes' %}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Codes
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Referral Link Display -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="stat-card">
+            <h5 class="mb-3">
+                <i class="fas fa-link me-2"></i>
+                Referral Link
+            </h5>
+            <div class="d-flex align-items-center">
+                <input type="text" class="form-control me-2" value="{{ code.full_referral_url }}" readonly>
+                <button class="btn btn-outline-primary" onclick="copyToClipboard('{{ code.full_referral_url }}')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+            <div class="mt-2">
+                <small class="text-muted">
+                    <strong>Domain:</strong> {{ code.domain }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="stat-card stat-card-warning">
+            <div class="stat-card-icon">
+                <i class="fas fa-mouse-pointer"></i>
+            </div>
+            <div class="stat-card-value">{{ code.total_clicks }}</div>
+            <div class="stat-card-label">Total Clicks</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card stat-card-success">
+            <div class="stat-card-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="stat-card-value">{{ code.total_signups }}</div>
+            <div class="stat-card-label">Sign-ups</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card stat-card-primary">
+            <div class="stat-card-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="stat-card-value">{{ code.total_conversions }}</div>
+            <div class="stat-card-label">Conversions</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="stat-card stat-card-danger">
+            <div class="stat-card-icon">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="stat-card-value">{{ code.conversion_rate }}%</div>
+            <div class="stat-card-label">Conversion Rate</div>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue Card -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">Total Revenue</h5>
+                    <h3 class="text-success mb-0">${{ code.total_revenue|floatformat:2 }}</h3>
+                </div>
+                <div class="stat-card-icon stat-card-success">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">Average Revenue per Conversion</h5>
+                    <h3 class="text-primary mb-0">${{ avg_revenue_per_conversion|floatformat:2 }}</h3>
+                </div>
+                <div class="stat-card-icon stat-card-primary">
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activity Tables -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="table-container">
+            <div class="p-3 border-bottom">
+                <h5 class="mb-0">Recent Clicks ({{ recent_clicks.count }})</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>IP Address</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for click in recent_clicks %}
+                        <tr>
+                            <td>{{ click.ip_address }}</td>
+                            <td>{{ click.clicked_at|date:"M d, H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="text-center py-4 text-muted">
+                                No clicks yet
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="table-container">
+            <div class="p-3 border-bottom">
+                <h5 class="mb-0">Recent Referrals ({{ recent_referrals.count }})</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for referral in recent_referrals %}
+                        <tr>
+                            <td>{{ referral.email }}</td>
+                            <td>
+                                <span class="badge bg-{% if referral.status == 'converted' %}success{% elif referral.status == 'signed_up' %}primary{% else %}secondary{% endif %}">
+                                    {{ referral.get_status_display }}
+                                </span>
+                            </td>
+                            <td>${{ referral.revenue|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                No referrals yet
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

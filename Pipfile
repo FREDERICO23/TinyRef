@@ -1,0 +1,47 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+whitenoise = "*"
+django-crispy-forms = "*"
+django-debug-toolbar = "*"
+crispy-bootstrap5 = "*"
+dj-database-url = "*"
+gunicorn = "*"
+groq = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
+django-allauth = "*"
+requests = "*"
+pyjwt = "*"
+cryptography = "*"
+celery = "*"
+autogen = "*"
+praw = "*"
+textblob = "*"
+redis = "*"
+pyautogen = "*"
+beautifulsoup4 = "*"
+scikit-learn = "*"
+numpy = "*"
+flaml = "*"
+pillow = "*"
+django-zoho-zeptomail = "*"
+django-tinymce = "*"
+google-generativeai = "*"
+vertexai = "*"
+ag2 = {extras = ["gemini"], version = "*"}
+markdown = "*"
+bleach = "*"
+premailer = "*"
+django-countries = "*"
+djangorestframework = "*"
+django-widget-tweaks = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
