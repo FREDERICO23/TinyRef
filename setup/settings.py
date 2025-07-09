@@ -155,7 +155,7 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 # Base URL for referral links
-BASE_URL = 'http://localhost:8000'  # Change this to your domain in production
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:8000')  # Change this to your domain in production
 
 # Email configuration (optional, for sending notifications)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
